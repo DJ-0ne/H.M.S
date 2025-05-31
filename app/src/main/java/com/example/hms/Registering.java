@@ -69,6 +69,7 @@ public class Registering extends AppCompatActivity {
                 connfirebase();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -81,6 +82,7 @@ public class Registering extends AppCompatActivity {
 
         // Read from the database
         myRef.push().setValue(gas);
+
     }
 
     public void Signin(View v){

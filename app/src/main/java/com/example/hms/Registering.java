@@ -77,7 +77,7 @@ public class Registering extends AppCompatActivity {
     private void connfirebase() {
         // Read from the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("pass");
+        DatabaseReference myRef = database.getReference("success");
 
         // Read from the database
         myRef.push().setValue(gas);

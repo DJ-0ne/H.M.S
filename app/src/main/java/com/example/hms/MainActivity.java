@@ -9,63 +9,136 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
-    TextInputEditText usrn,mail,pass;
+    TextInputEditText usrn, mail, pass;
     Button signin;
-    String username,email,password;
+    String username, email, password;
     SAG sag;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        try {
+            setContentView(R.layout.activity_main);
 
-        signin = findViewById(R.id.signin);
-        usrn = findViewById(R.id.usr);
-        mail = findViewById(R.id.email);
-        pass = findViewById(R.id.pass);
+            // Initialize views with null checks
+            signin = findViewById(R.id.signin);
+            usrn = findViewById(R.id.usr);
+            mail = findViewById(R.id.email);
+            pass = findViewById(R.id.pass);
 
-
-        signin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                username = usrn.getText().toString();
-                usrn.setText("");
-                email = mail.getText().toString();
-                mail.setText("");
-                password = pass.getText().toString();
-                pass.setText("");
-
-
-                sag = new SAG(username,email,password);
-
-                connfirebase();
+            if (signin == null || usrn == null || mail == null || pass == null) {
+                Toast.makeText(this, "Error: UI components not found", LENGTH_SHORT).show();
+                return;
             }
-        });
+
+            signin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    username = usrn.getText().toString().trim();
+                    email = mail.getText().toString().trim();
+                    password = pass.getText().toString().trim();
+
+                    // Validate inputs
+                    if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                        Toast.makeText(getApplicationContext(), "Please fill all fields", LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // Validate email format
+                    if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        Toast.makeText(getApplicationContext(), "Invalid email format", LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    sag = new SAG(username, email, password);
+                    usrn.setText("");
+                    mail.setText("");
+                    pass.setText("");
+                    checkFirebaseData();
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(this, "Initialization error: " + e.getMessage(), LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
-    private void connfirebase() {
-        // Read from the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("success");
+    private void checkFirebaseData() {
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("success");
 
-        // Read from the database
-        myRef.push().setValue(sag);
+            // Query by email for efficiency
+            Query emailQuery = myRef.orderByChild("email").equalTo(email);
+            emailQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    try {
+                        boolean isFound = false;
+
+                        // Check for matching username and password
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            try {
+                                // Manual deserialization to handle mismatches
+                                String storedUsername = snapshot.child("username").getValue(String.class);
+                                String storedEmail = snapshot.child("email").getValue(String.class);
+                                String storedPassword = snapshot.child("password").getValue(String.class);
+
+                                if (storedUsername != null && storedEmail != null && storedPassword != null &&
+                                        storedUsername.equals(username) &&
+                                        storedEmail.equals(email) &&
+                                        storedPassword.equals(password)) {
+                                    isFound = true;
+                                    break;
+                                }
+                            } catch (Exception e) {
+                                // Log individual snapshot errors but continue processing
+                                System.err.println("Error processing snapshot: " + e.getMessage());
+                                e.printStackTrace();
+                            }
+                        }
+
+                        // Display result and navigate on success
+                        if (isFound) {
+                            Toast.makeText(getApplicationContext(), "Login Successful", LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Login Failed: Invalid credentials", LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), "Data processing error: " + e.getMessage(), LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(getApplicationContext(), "Database error: " + databaseError.getMessage(), LENGTH_SHORT).show();
+
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Firebase error: " + e.getMessage(), LENGTH_SHORT).show();
+            e.printStackTrace();
+        }
     }
 
-    public void login(View v){
+    public void login(View v) {
         Intent intent = new Intent(getApplicationContext(), Registering.class);
         startActivity(intent);
     }
-
 }

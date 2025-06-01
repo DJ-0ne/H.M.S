@@ -37,7 +37,7 @@ public class Registering extends AppCompatActivity {
         register = findViewById(R.id.register);
         usrn = findViewById(R.id.nm);
         mail= findViewById(R.id.mailz);
-        phone = findViewById(R.id.phone);
+        phone = findViewById(R.id.pno);
         pass = findViewById(R.id.pass);
         con = findViewById(R.id.con);
         radio = findViewById(R.id.gender);
@@ -106,14 +106,14 @@ public class Registering extends AppCompatActivity {
                     Toast.makeText(Registering.this, "Username already exists", LENGTH_SHORT).show();
                 } else {
                     // Check email
-                    Ref.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                    Ref.orderByChild("phonenumber").equalTo(phonenumber).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot emailSnapshot) {
                             if (emailSnapshot.exists()) {
                                 Toast.makeText(Registering.this, "Email already exists", LENGTH_SHORT).show();
                             } else {
                                 // Check phone number
-                                Ref.orderByChild("phonenumber").equalTo(phonenumber).addListenerForSingleValueEvent(new ValueEventListener() {
+                                Ref.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot phoneSnapshot) {
                                         if (phoneSnapshot.exists()) {

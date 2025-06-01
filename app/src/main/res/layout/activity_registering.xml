@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F0F2F5"
-    android:fillViewport="true">
+   >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -90,11 +90,12 @@
                     >
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/phone"
+                        android:id="@+id/pno"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Phone number"
                         android:inputType="number"
+                        android:singleLine="true"
                         android:textColor="@color/black" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -135,17 +136,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/gender"
+                    android:layout_marginBottom="20sp"
                     >
                     <RadioButton
                         android:id="@+id/m"
                         android:text="male"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        />
                     <RadioButton
                         android:id="@+id/f"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="female"
+                        android:textColor="@color/black"
                         />
                 </RadioGroup>
 

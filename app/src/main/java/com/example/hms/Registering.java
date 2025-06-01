@@ -9,12 +9,10 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.android.material.textfield.TextInputEditText;
 
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 public class Registering extends AppCompatActivity {
     TextInputEditText usrn,mail,phone,pass,con;
@@ -46,15 +46,15 @@ public class Registering extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                username = usrn.getText().toString();
+                username = Objects.requireNonNull(usrn.getText()).toString();
                 usrn.setText("");
-                email = mail.getText().toString();
+                email = Objects.requireNonNull(mail.getText()).toString();
                 mail.setText("");
-                phonenumber = phone.getText().toString();
+                phonenumber = Objects.requireNonNull(phone.getText()).toString();
                 phone.setText("");
-                password = pass.getText().toString();
+                password = Objects.requireNonNull(pass.getText()).toString();
                 pass.setText("");
-                confirm_password = con.getText().toString();
+                confirm_password = Objects.requireNonNull(con.getText()).toString();
                 con.setText("");
 
                 if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirm_password.isEmpty()) {
@@ -128,7 +128,7 @@ public class Registering extends AppCompatActivity {
                                                     startActivity(intent);
                                                     finish();
                                                 } else {
-                                                    Toast.makeText(Registering.this, "Registration failed: " + task.getException().getMessage(), LENGTH_SHORT).show();
+                                                    Toast.makeText(Registering.this, "Registration failed: " + Objects.requireNonNull(task.getException()).getMessage(), LENGTH_SHORT).show();
                                                 }
                                             });
                                         }

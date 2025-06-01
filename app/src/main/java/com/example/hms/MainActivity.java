@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -18,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     TextInputEditText usrn, mail, pass;
@@ -46,9 +49,9 @@ public class MainActivity extends AppCompatActivity {
             signin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    username = usrn.getText().toString().trim();
-                    email = mail.getText().toString().trim();
-                    password = pass.getText().toString().trim();
+                    username = Objects.requireNonNull(usrn.getText()).toString().trim();
+                    email = Objects.requireNonNull(mail.getText()).toString().trim();
+                    password = Objects.requireNonNull(pass.getText()).toString().trim();
 
                     // Validate inputs
                     if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             Toast.makeText(this, "Initialization error: " + e.getMessage(), LENGTH_SHORT).show();
-            e.printStackTrace();
+
         }
     }
 
@@ -84,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             Query emailQuery = myRef.orderByChild("email").equalTo(email);
             emailQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     try {
                         boolean isFound = false;
 
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
                     Toast.makeText(getApplicationContext(), "Database error: " + databaseError.getMessage(), LENGTH_SHORT).show();
 
                 }

@@ -9,11 +9,15 @@ import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
@@ -72,7 +76,7 @@ public class Add extends AppCompatActivity {
                     return;
                 }
 
-                agas = new AGAS(patient_name,patient_email,phone_number,patient_status,gender);
+
                 addpatient();
             }
         });
@@ -81,11 +85,52 @@ public class Add extends AppCompatActivity {
 
     private void addpatient() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference Ref = database.getReference("beautiful");
+        DatabaseReference Ref = database.getReference("total");
+        // Check username
+        Ref.orderByChild("patient_email").equalTo(patient_email).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot usernameSnapshot) {
+                if (usernameSnapshot.exists()) {
+                    Toast.makeText(Add.this, "Email already exists", LENGTH_SHORT).show();
+                } else {
+                    // Check email
+                    Ref.orderByChild("phone_number").equalTo(phone_number).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot emailSnapshot) {
+                            if (emailSnapshot.exists()) {
+                                Toast.makeText(Add.this, "Email already exists", LENGTH_SHORT).show();
+                            } else {
+                                // Check phone number
 
-        Ref.push().setValue(agas);
-        Toast.makeText(getApplicationContext(),"Submitted successfully",LENGTH_SHORT).show();
-        Intent intent = new Intent(getApplicationContext(),Dashboard.class);
-        startActivity(intent);
+                                            // All fields are unique, proceed with registration
+                                            agas = new AGAS(patient_name, patient_email, phone_number, patient_status, gender);
+                                            Ref.push().setValue(agas).addOnCompleteListener(task -> {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(Add.this, "Registered successfully", LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(getApplicationContext(), Dashboard.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Toast.makeText(Add.this, "Registration failed: " + Objects.requireNonNull(task.getException()).getMessage(), LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
+
+
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(Add.this, "Database error: " + error.getMessage(), LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Add.this, "Database error: " + error.getMessage(), LENGTH_SHORT).show();
+            }
+        });
     }
 }

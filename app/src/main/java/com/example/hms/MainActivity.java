@@ -35,16 +35,14 @@ public class MainActivity extends AppCompatActivity {
         try {
             setContentView(R.layout.activity_main);
 
-            // Initialize views with null checks
+
+            
             signin = findViewById(R.id.signin);
             usrn = findViewById(R.id.nm);
             mail = findViewById(R.id.email);
             pass = findViewById(R.id.pass);
 
-            if (signin == null || usrn == null || mail == null || pass == null) {
-                Toast.makeText(this, "Error: UI components not found", LENGTH_SHORT).show();
-                return;
-            }
+
 
             signin.setOnClickListener(new View.OnClickListener() {
                 @Override

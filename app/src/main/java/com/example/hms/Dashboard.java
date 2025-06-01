@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+/** @noinspection ALL*/
 public class Dashboard extends AppCompatActivity {
     Button button;
     LinearLayout patientsContainer;
@@ -63,7 +64,7 @@ public class Dashboard extends AppCompatActivity {
         DatabaseReference ref;
         try {
             database = FirebaseDatabase.getInstance();
-            ref = database.getReference("beautiful");
+            ref = database.getReference("total");
         } catch (Exception e) {
             Toast.makeText(this, "Database access failed: " + e.getMessage(), LENGTH_SHORT).show();
             return;
@@ -122,7 +123,7 @@ public class Dashboard extends AppCompatActivity {
                             imageParams.setMargins(0, 0, (int) (16 * getResources().getDisplayMetrics().density), 0);
                             imageView.setLayoutParams(imageParams);
                             try {
-                                imageView.setImageResource(R.mipmap.ic_launcher_round);
+                                imageView.setImageResource(R.drawable.patient);
                             } catch (Exception e) {
                                 Toast.makeText(Dashboard.this, "Image resource not found", LENGTH_SHORT).show();
                             }

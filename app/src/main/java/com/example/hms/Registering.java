@@ -35,9 +35,9 @@ public class Registering extends AppCompatActivity {
         setContentView(R.layout.activity_registering);
 
         register = findViewById(R.id.register);
-        usrn = findViewById(R.id.usr);
-        mail= findViewById(R.id.mail);
-        phone = findViewById(R.id.pno);
+        usrn = findViewById(R.id.nm);
+        mail= findViewById(R.id.mailz);
+        phone = findViewById(R.id.phone);
         pass = findViewById(R.id.pass);
         con = findViewById(R.id.con);
         radio = findViewById(R.id.gender);

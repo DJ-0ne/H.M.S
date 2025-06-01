@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Initialize views with null checks
             signin = findViewById(R.id.signin);
-            usrn = findViewById(R.id.usr);
+            usrn = findViewById(R.id.nm);
             mail = findViewById(R.id.email);
             pass = findViewById(R.id.pass);
 

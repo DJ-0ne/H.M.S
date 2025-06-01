@@ -10,13 +10,17 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.google.android.material.textfield.TextInputEditText;
+
 import com.google.firebase.database.FirebaseDatabase;
 
 public class Registering extends AppCompatActivity {
@@ -41,6 +45,7 @@ public class Registering extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 username = usrn.getText().toString();
                 usrn.setText("");
                 email = mail.getText().toString();
@@ -52,6 +57,25 @@ public class Registering extends AppCompatActivity {
                 confirm_password = con.getText().toString();
                 con.setText("");
 
+                if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirm_password.isEmpty()) {
+                    Toast.makeText(Registering.this, "Please fill all fields", LENGTH_SHORT).show();
+                    return;
+                }
+                if (!password.equals(confirm_password)) {
+                    Toast.makeText(Registering.this, "Passwords do not match", LENGTH_SHORT).show();
+                    return;
+                }
+                if (!phonenumber.matches("^[0-9+]{9,15}$")) {
+                    Toast.makeText(Registering.this, "Invalid phone number format", LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Validate email format
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(Registering.this, "Invalid email format", LENGTH_SHORT).show();
+                    return;
+                }
+
                 int selectedId = radio.getCheckedRadioButtonId();
 
                 if (selectedId == R.id.m) {
@@ -59,35 +83,82 @@ public class Registering extends AppCompatActivity {
                 } else if (selectedId == R.id.f) {
                     gender = "Female";
                 } else {
-                    gender = "null";
+                    Toast.makeText(Registering.this, "Please select a gender", LENGTH_SHORT).show();
+                    return;
                 }
 
 
+                Validation();
 
-                Toast.makeText(Registering.this, "Registered succesfully", LENGTH_SHORT).show();
-                gas = new GAS(username,email,phonenumber,password,gender,confirm_password);
-                connfirebase();
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
             }
         });
 
     }
 
-    private void connfirebase() {
-        // Read from the database
+    private void Validation() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("success");
+        DatabaseReference Ref = database.getReference("success");
+        // Check username
+        Ref.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot usernameSnapshot) {
+                if (usernameSnapshot.exists()) {
+                    Toast.makeText(Registering.this, "Username already exists", LENGTH_SHORT).show();
+                } else {
+                    // Check email
+                    Ref.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot emailSnapshot) {
+                            if (emailSnapshot.exists()) {
+                                Toast.makeText(Registering.this, "Email already exists", LENGTH_SHORT).show();
+                            } else {
+                                // Check phone number
+                                Ref.orderByChild("phonenumber").equalTo(phonenumber).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot phoneSnapshot) {
+                                        if (phoneSnapshot.exists()) {
+                                            Toast.makeText(Registering.this, "Phone number already exists", LENGTH_SHORT).show();
+                                        } else {
+                                            // All fields are unique, proceed with registration
+                                            gas = new GAS(username, email, phonenumber, password, gender, confirm_password);
+                                            Ref.push().setValue(gas).addOnCompleteListener(task -> {
+                                                if (task.isSuccessful()) {
+                                                    Toast.makeText(Registering.this, "Registered successfully", LENGTH_SHORT).show();
+                                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                } else {
+                                                    Toast.makeText(Registering.this, "Registration failed: " + task.getException().getMessage(), LENGTH_SHORT).show();
+                                                }
+                                            });
+                                        }
+                                    }
 
-        // Read from the database
-        myRef.push().setValue(gas);
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Toast.makeText(Registering.this, "Database error: " + error.getMessage(), LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        }
 
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(Registering.this, "Database error: " + error.getMessage(), LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(Registering.this, "Database error: " + error.getMessage(), LENGTH_SHORT).show();
+            }
+        });
     }
 
-    public void Signin(View v){
+    public void Signin(View v) {
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
-
     }
 }

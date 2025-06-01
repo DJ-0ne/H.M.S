@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                             } catch (Exception e) {
                                 // Log individual snapshot errors but continue processing
                                 System.err.println("Error processing snapshot: " + e.getMessage());
-                                e.printStackTrace();
+
                             }
                         }
 
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), "Data processing error: " + e.getMessage(), LENGTH_SHORT).show();
-                        e.printStackTrace();
+
                     }
                 }
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             });
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Firebase error: " + e.getMessage(), LENGTH_SHORT).show();
-            e.printStackTrace();
+
         }
     }
 

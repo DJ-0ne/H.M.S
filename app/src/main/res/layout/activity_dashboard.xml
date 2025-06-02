@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Patient's info"
+            android:text="Patient's Status"
             android:textAlignment="center"
             android:textColor="@color/orange"
             android:textSize="30dp"
@@ -44,6 +44,7 @@
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
+                android:id="@+id/cards"
                 android:layout_height="80dp"
                 android:layout_margin="10sp"
                 android:layout_weight="1"
@@ -55,7 +56,7 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="5sp"
-                    android:src="@drawable/doc"
+                    android:src="@drawable/patient"
 
                     />
 
@@ -104,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/red"
+            android:backgroundTint="@color/orange"
             android:text="Add new Patient"
             android:textColor="@color/white" />
 

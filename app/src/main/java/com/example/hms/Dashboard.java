@@ -22,9 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-/** @noinspection ALL*/
+
 public class Dashboard extends AppCompatActivity {
-    Button button;
+    Button button,dis;
     LinearLayout patientsContainer;
 
     @Override

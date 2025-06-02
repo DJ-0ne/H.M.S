@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
                                     break;
                                 }
                             } catch (Exception e) {
-                                // Log individual snapshot errors but continue processing
                                 System.err.println("Error processing snapshot: " + e.getMessage());
 
                             }
